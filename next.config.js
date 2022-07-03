@@ -35,5 +35,11 @@ module.exports = {
     domains: ['s3.us-west-2.amazonaws.com', 'images.unsplash.com'],
   },
 
+    async rewrites() {
+       return [
+         { source: '/feed', destination: '/api/feed' },
+       ]
+     },
+
   outputFileTracing: false,
 }
