@@ -5,7 +5,7 @@ import { NEXT_PUBLIC_URL } from '../lib/notion/server-constants'
 
 export const SITE_TITLE = 'ｱﾋﾙﾁｬﾝのつぶやき'
 export const SITE_DESCRIPTION =
-  'ながめのつぶやき'
+  'Twitterよりながめのつぶやき'
 
 const DocumentHead = ({ title = '', description = '', urlOgImage = '' }) => {
   const { asPath } = useRouter()
