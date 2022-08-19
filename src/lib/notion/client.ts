@@ -11,6 +11,7 @@ import {
   Image,
   Code,
   Quote,
+  Equation,
   Callout,
   Embed,
   Video,
@@ -356,7 +357,7 @@ export async function getFirstPostByTag(tag: string) {
   return _buildPost(data.results[0])
 }
 
-export async function getAllBlocksByBlockId(blockId) {
+export async function getAllBlocksByBlockId(blockId: string) {
   let allBlocks: Block[] = []
 
   const params = {
@@ -463,6 +464,13 @@ export async function getAllBlocksByBlockId(blockId) {
           }
 
           block.Quote = quote
+          break
+        case 'equation':
+          const equation: Equation = {
+            Expression: item[item.type].expression,
+          }
+
+          block.Equation = equation
           break
         case 'callout':
           const callout: Callout = {
@@ -633,11 +641,6 @@ function _buildPost(data) {
 }
 
 function _buildRichText(item) {
-  const text: Text = {
-    Content: item.text.content,
-    Link: item.text.link,
-  }
-
   const annotation: Annotation = {
     Bold: item.annotations.bold,
     Italic: item.annotations.italic,
@@ -648,10 +651,22 @@ function _buildRichText(item) {
   }
 
   const richText: RichText = {
-    Text: text,
     Annotation: annotation,
     PlainText: item.plain_text,
     Href: item.href,
+  }
+
+  if (item.type === 'text') {
+    const text: Text = {
+      Content: item.text.content,
+      Link: item.text.link,
+    }
+    richText.Text = text
+  } else if (item.type === 'equation') {
+    const equation: Equation = {
+      Expression: item.equation.expression,
+    }
+    richText.Equation = equation
   }
 
   return richText
