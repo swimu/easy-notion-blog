@@ -3,6 +3,7 @@ import useSWR from "swr"
 import axios from 'axios'
 
 import { NEXT_PUBLIC_URL } from '../../lib/notion/server-constants'
+import { Post } from '../../lib/notion/interfaces'
 import DocumentHead from '../../components/document-head'
 import { Block } from '../../lib/notion/interfaces'
 import {
@@ -65,7 +66,7 @@ export async function getStaticProps({ params: { slug } }) {
       rankedPosts,
       recentPosts,
       tags,
-      sameTagPosts: sameTagPosts.filter(p => p.Slug !== post.Slug),
+      sameTagPosts: sameTagPosts.filter((p: Post) => p.Slug !== post.Slug),
       fallback,
     },
     revalidate: 60,
@@ -92,7 +93,7 @@ const fetchBlocks = async (slug: string): Promise<Array<Block>> => {
 const includeExpiredImage = (blocks: Array<Block>): boolean => {
   const now = Date.now()
 
-  blocks.forEach(block => {
+  return blocks.some(block => {
     if (block.Type === 'image') {
       const image = block.Image
       if (image.File && image.File.ExpiryTime && Date.parse(image.File.ExpiryTime) < now) {
@@ -100,9 +101,8 @@ const includeExpiredImage = (blocks: Array<Block>): boolean => {
       }
     }
     // TODO: looking for the image block in Children recursively
+    return false
   })
-
-  return false
 }
 
 const RenderPost = ({
