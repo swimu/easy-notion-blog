@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { NEXT_PUBLIC_URL } from '../../lib/notion/server-constants'
+import { NEXT_PUBLIC_URL } from '../../app/server-constants'
 
 import { getBlogLink } from '../../lib/blog-helpers'
 import { getPosts } from '../../lib/notion/client'
@@ -57,7 +57,7 @@ function createRSS(posts = []) {
   </feed>`
 }
 
-const Atom = async function(req: IncomingMessage, res: ServerResponse) {
+const Atom = async function (req: IncomingMessage, res: ServerResponse) {
   res.setHeader('Content-Type', 'text/xml')
   res.setHeader(
     'Cache-Control',
