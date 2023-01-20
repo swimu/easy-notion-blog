@@ -19,8 +19,9 @@ import {
   getAllTags,
 } from '../../lib/notion/client'
 
-export const revalidate = 60
 export const dynamic = 'force-dynamic' 
+export const revalidate = 60
+
 
 const BlogPage = async () => {
   const [posts, firstPost, rankedPosts, tags] = await Promise.all([
