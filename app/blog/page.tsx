@@ -19,6 +19,7 @@ import {
   getAllTags,
 } from '../../lib/notion/client'
 
+export const dynamic = 'force-dynamic' 
 export const revalidate = 60
 
 
