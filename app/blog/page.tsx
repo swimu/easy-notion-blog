@@ -20,7 +20,7 @@ import {
 } from '../../lib/notion/client'
 
 export const revalidate = 60
-export const dynamic = 'force-dynamic' 
+
 
 const BlogPage = async () => {
   const [posts, firstPost, rankedPosts, tags] = await Promise.all([
