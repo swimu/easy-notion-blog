@@ -1,8 +1,8 @@
-import Link from 'next/link'
-import { NEXT_PUBLIC_SITE_TITLE } from './server-constants'
-import GoogleAnalytics from '../components/google-analytics'
-import styles from '../styles/page.module.css'
-import Image from 'next/image'
+import Link from 'next/link';
+import { NEXT_PUBLIC_SITE_TITLE } from './server-constants';
+import GoogleAnalytics from '../components/google-analytics';
+import styles from '../styles/page.module.css';
+import Image from 'next/image';
 
 const RootPage = () => (
   <>
@@ -10,14 +10,14 @@ const RootPage = () => (
     <div className={styles.container}>
       <div>
         <h2>
-          すいむ (<Link href="https://twitter.com/swimuuu">@swimuuu</Link>
+          すいむ (<Link href='https://twitter.com/swimuuu'>@swimuuu</Link>
           )って？
         </h2>
         <Image
-          src="/images/flyingRubberDuck.jpeg"
+          src='/images/flyingRubberDuck.jpeg'
           width={200}
           height={200}
-          alt="My avatar"
+          alt='My avatar'
         />
 
         <p>
@@ -31,7 +31,7 @@ const RootPage = () => (
         <p>プログラミングにも興味があります。</p>
         <p>
           このサイトは{' '}
-          <Link href="https://github.com/otoyo/easy-notion-blog">
+          <Link href='https://github.com/otoyo/easy-notion-blog'>
             easy-notion-blog
           </Link>{' '}
           を使って公開しています。
@@ -58,12 +58,12 @@ const RootPage = () => (
         <h2>連絡をとりたい</h2>
         <p>
           Twitterアカウント(
-          <Link href="https://twitter.com/swimuuu">@swimuuu</Link>
+          <Link href='https://twitter.com/swimuuu'>@swimuuu</Link>
           )で待っています。
         </p>
       </div>
     </div>
   </>
-)
+);
 
-export default RootPage
+export default RootPage;
