@@ -1,12 +1,12 @@
-import { notFound } from 'next/navigation'
-import { NUMBER_OF_POSTS_PER_PAGE } from '../../../../app/server-constants'
-import GoogleAnalytics from '../../../../components/google-analytics'
+import { notFound } from 'next/navigation';
+import { NUMBER_OF_POSTS_PER_PAGE } from '../../../../app/server-constants';
+import GoogleAnalytics from '../../../../components/google-analytics';
 import {
   getRankedPosts,
   getPostsBefore,
   getFirstPost,
   getAllTags,
-} from '../../../../lib/notion/client'
+} from '../../../../lib/notion/client';
 import {
   BlogPostLink,
   BlogTagLink,
@@ -17,16 +17,16 @@ import {
   PostTags,
   PostTitle,
   ReadMoreLink,
-} from '../../../../components/blog-parts'
-import styles from '../../../../styles/blog.module.css'
+} from '../../../../components/blog-parts';
+import styles from '../../../../styles/blog.module.css';
 
-export const revalidate = 3600
+export const revalidate = 3600;
 
 const BlogBeforeDatePage = async ({ params: { date: encodedDate } }) => {
-  const date = decodeURIComponent(encodedDate)
+  const date = decodeURIComponent(encodedDate);
 
   if (!Date.parse(date) || !/^\d{4}-\d{2}-\d{2}/.test(date)) {
-    notFound()
+    notFound();
   }
 
   const [posts, firstPost, rankedPosts, tags] = await Promise.all([
@@ -34,7 +34,7 @@ const BlogBeforeDatePage = async ({ params: { date: encodedDate } }) => {
     getFirstPost(),
     getRankedPosts(),
     getAllTags(),
-  ])
+  ]);
 
   return (
     <>
@@ -56,7 +56,7 @@ const BlogBeforeDatePage = async ({ params: { date: encodedDate } }) => {
                 <PostExcerpt post={post} />
                 <ReadMoreLink post={post} />
               </div>
-            )
+            );
           })}
 
           <footer>
@@ -65,12 +65,12 @@ const BlogBeforeDatePage = async ({ params: { date: encodedDate } }) => {
         </div>
 
         <div className={styles.subContent}>
-          <BlogPostLink heading="Recommended" posts={rankedPosts} />
-          <BlogTagLink heading="Categories" tags={tags} />
+          <BlogPostLink heading='Recommended' posts={rankedPosts} />
+          <BlogTagLink heading='Categories' tags={tags} />
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default BlogBeforeDatePage
+export default BlogBeforeDatePage;

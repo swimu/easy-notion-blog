@@ -1,42 +1,42 @@
-'use client'
+'use client';
 
-import React from 'react'
-import useSWR from 'swr'
-import axios from 'axios'
-import { Block } from '../../lib/notion/interfaces'
-import styles from '../../styles/blog.module.css'
+import React from 'react';
+import useSWR from 'swr';
+import axios from 'axios';
+import { Block } from '../../lib/notion/interfaces';
+import styles from '../../styles/blog.module.css';
 
 const fetchBlock = async (blockId: string): Promise<Block> => {
   try {
-    const { data: block } = await axios.get(`/api/blocks/${blockId}`)
-    return block as Block
+    const { data: block } = await axios.get(`/api/blocks/${blockId}`);
+    return block as Block;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 const isExpired = (block: Block): boolean => {
-  const now = Date.now()
+  const now = Date.now();
 
   if (block.Type === 'image') {
-    const image = block.Image
+    const image = block.Image;
     if (
       image.File &&
       image.File.ExpiryTime &&
       Date.parse(image.File.ExpiryTime) < now
     ) {
-      return true
+      return true;
     }
   }
-  return false
-}
+  return false;
+};
 
 const ImageBlock = ({ block: initialBlock }) => {
   const { data: block } = useSWR(
     isExpired(initialBlock) && initialBlock.Id,
     fetchBlock,
-    { fallbackData: initialBlock }
-  )
+    { fallbackData: initialBlock },
+  );
 
   return (
     <figure className={styles.image}>
@@ -47,7 +47,7 @@ const ImageBlock = ({ block: initialBlock }) => {
               ? block.Image.External.Url
               : block.Image.File.Url
           }
-          alt="image block"
+          alt='image block'
         />
       </div>
       {block.Image.Caption.length > 0 && block.Image.Caption[0].Text.Content ? (
@@ -56,7 +56,7 @@ const ImageBlock = ({ block: initialBlock }) => {
         </figcaption>
       ) : null}
     </figure>
-  )
-}
+  );
+};
 
-export default ImageBlock
+export default ImageBlock;

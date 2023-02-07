@@ -1,9 +1,9 @@
-import { getPostBySlug } from '../../../lib/notion/client'
-import { getBlogLink } from '../../../lib/blog-helpers'
-import DocumentHead from '../../../components/document-head'
+import { getPostBySlug } from '../../../lib/notion/client';
+import { getBlogLink } from '../../../lib/blog-helpers';
+import DocumentHead from '../../../components/document-head';
 
 const BlogSlugHead = async ({ params: { slug } }) => {
-  const post = await getPostBySlug(slug)
+  const post = await getPostBySlug(slug);
 
   return post ? (
     <DocumentHead
@@ -13,7 +13,7 @@ const BlogSlugHead = async ({ params: { slug } }) => {
     />
   ) : (
     <DocumentHead />
-  )
-}
+  );
+};
 
-export default BlogSlugHead
+export default BlogSlugHead;

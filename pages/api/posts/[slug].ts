@@ -1,28 +1,28 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next';
 
-import { getPostBySlug } from '../../../lib/notion/client'
+import { getPostBySlug } from '../../../lib/notion/client';
 
 const ApiPost = async function (req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
-    res.statusCode = 400
-    res.end()
-    return
+    res.statusCode = 400;
+    res.end();
+    return;
   }
 
-  const { slug: slugs } = req.query
+  const { slug: slugs } = req.query;
 
   if (!slugs) {
-    res.statusCode = 400
-    res.end()
-    return
+    res.statusCode = 400;
+    res.end();
+    return;
   }
 
-  const slug = slugs.toString()
+  const slug = slugs.toString();
 
   try {
-    const post = await getPostBySlug(slug)
+    const post = await getPostBySlug(slug);
 
-    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Type', 'application/json');
     res.write(
       JSON.stringify({
         Title: post.Title,
@@ -31,15 +31,15 @@ const ApiPost = async function (req: NextApiRequest, res: NextApiResponse) {
         Tags: post.Tags,
         Excerpt: post.Excerpt,
         OGImage: post.OGImage,
-      })
-    )
-    res.statusCode = 200
-    res.end()
+      }),
+    );
+    res.statusCode = 200;
+    res.end();
   } catch (e) {
-    console.log(e)
-    res.statusCode = 500
-    res.end()
+    console.log(e);
+    res.statusCode = 500;
+    res.end();
   }
-}
+};
 
-export default ApiPost
+export default ApiPost;

@@ -1,9 +1,9 @@
-import { IncomingMessage, ServerResponse } from 'http'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { NEXT_PUBLIC_URL } from '../../app/server-constants'
+import { IncomingMessage, ServerResponse } from 'http';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { NEXT_PUBLIC_URL } from '../../app/server-constants';
 
-import { getBlogLink } from '../../lib/blog-helpers'
-import { getPosts } from '../../lib/notion/client'
+import { getBlogLink } from '../../lib/blog-helpers';
+import { getPosts } from '../../lib/notion/client';
 
 function decode(string) {
   return string
@@ -11,11 +11,11 @@ function decode(string) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
+    .replace(/'/g, '&apos;');
 }
 
 function mapToEntry(post) {
-  const date = new Date(post.Date)
+  const date = new Date(post.Date);
   return `
     <entry>
       <id>${NEXT_PUBLIC_URL}${getBlogLink(post.Slug)}</id>
@@ -32,20 +32,20 @@ function mapToEntry(post) {
           ${renderToStaticMarkup(post.Excerpt)}
         </div>
       </content>
-    </entry>`
+    </entry>`;
 }
 
 function concat(total, item) {
-  return total + item
+  return total + item;
 }
 
 function createRSS(posts = []) {
-  const postsString = posts.map(mapToEntry).reduce(concat, '')
+  const postsString = posts.map(mapToEntry).reduce(concat, '');
   const updated =
     posts.length > 0
       ? `
     <updated>${new Date(posts[0].Date).toJSON()}</updated>`
-      : ''
+      : '';
 
   return `<?xml version="1.0" encoding="utf-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom">
@@ -54,25 +54,25 @@ function createRSS(posts = []) {
     <link href="${NEXT_PUBLIC_URL}/feed" rel="self" type="application/rss+xml"/>
     <link href="${NEXT_PUBLIC_URL}" />${updated}
     <id>${NEXT_PUBLIC_URL}/feed</id>${postsString}
-  </feed>`
+  </feed>`;
 }
 
 const Atom = async function (req: IncomingMessage, res: ServerResponse) {
-  res.setHeader('Content-Type', 'text/xml')
+  res.setHeader('Content-Type', 'text/xml');
   res.setHeader(
     'Cache-Control',
-    'public, max-age=1800, stale-while-revalidate=86400'
-  )
+    'public, max-age=1800, stale-while-revalidate=86400',
+  );
 
   try {
-    const posts = await getPosts()
-    res.write(createRSS(posts))
-    res.end()
+    const posts = await getPosts();
+    res.write(createRSS(posts));
+    res.end();
   } catch (e) {
-    console.log(e)
-    res.statusCode = 500
-    res.end()
+    console.log(e);
+    res.statusCode = 500;
+    res.end();
   }
-}
+};
 
-export default Atom
+export default Atom;

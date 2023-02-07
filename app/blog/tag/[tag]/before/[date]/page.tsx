@@ -1,7 +1,7 @@
-import { notFound } from 'next/navigation'
-import { NUMBER_OF_POSTS_PER_PAGE } from '../../../../../../app/server-constants'
-import GoogleAnalytics from '../../../../../../components/google-analytics'
-import { colorClass } from '../../../../../../components/notion-block'
+import { notFound } from 'next/navigation';
+import { NUMBER_OF_POSTS_PER_PAGE } from '../../../../../../app/server-constants';
+import GoogleAnalytics from '../../../../../../components/google-analytics';
+import { colorClass } from '../../../../../../components/notion-block';
 import {
   BlogPostLink,
   BlogTagLink,
@@ -12,27 +12,27 @@ import {
   PostTags,
   PostTitle,
   ReadMoreLink,
-} from '../../../../../../components/blog-parts'
+} from '../../../../../../components/blog-parts';
 import {
   getPosts,
   getRankedPosts,
   getPostsByTagBefore,
   getFirstPostByTag,
   getAllTags,
-} from '../../../../../../lib/notion/client'
-import styles from '../../../../../../styles/blog.module.css'
-import '../../../../../../styles/notion-color.css'
+} from '../../../../../../lib/notion/client';
+import styles from '../../../../../../styles/blog.module.css';
+import '../../../../../../styles/notion-color.css';
 
-export const revalidate = 3600
+export const revalidate = 3600;
 
 const BlogTagBeforeDatePage = async ({
   params: { tag: encodedTag, date: encodedDate },
 }) => {
-  const tag = decodeURIComponent(encodedTag)
-  const date = decodeURIComponent(encodedDate)
+  const tag = decodeURIComponent(encodedTag);
+  const date = decodeURIComponent(encodedDate);
 
   if (!Date.parse(date) || !/^\d{4}-\d{2}-\d{2}/.test(date)) {
-    notFound()
+    notFound();
   }
 
   const [posts, firstPost, rankedPosts, recentPosts, tags] = await Promise.all([
@@ -41,9 +41,9 @@ const BlogTagBeforeDatePage = async ({
     getRankedPosts(),
     getPosts(5),
     getAllTags(),
-  ])
+  ]);
 
-  const currentTag = posts[0]?.Tags.find((t) => t.name === tag)
+  const currentTag = posts[0]?.Tags.find((t) => t.name === tag);
 
   return (
     <>
@@ -74,7 +74,7 @@ const BlogTagBeforeDatePage = async ({
                 <PostExcerpt post={post} />
                 <ReadMoreLink post={post} />
               </div>
-            )
+            );
           })}
 
           <footer>
@@ -83,13 +83,13 @@ const BlogTagBeforeDatePage = async ({
         </div>
 
         <div className={styles.subContent}>
-          <BlogPostLink heading="Recommended" posts={rankedPosts} />
-          <BlogPostLink heading="Latest Posts" posts={recentPosts} />
-          <BlogTagLink heading="Categories" tags={tags} />
+          <BlogPostLink heading='Recommended' posts={rankedPosts} />
+          <BlogPostLink heading='Latest Posts' posts={recentPosts} />
+          <BlogTagLink heading='Categories' tags={tags} />
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default BlogTagBeforeDatePage
+export default BlogTagBeforeDatePage;

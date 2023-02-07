@@ -1,5 +1,5 @@
-import { NOTION_API_SECRET, DATABASE_ID } from '../../app/server-constants'
-import * as responses from './responses'
+import { NOTION_API_SECRET, DATABASE_ID } from '../../app/server-constants';
+import * as responses from './responses';
 import {
   Post,
   Block,
@@ -32,19 +32,19 @@ import {
   Text,
   Annotation,
   SelectProperty,
-} from './interfaces'
+} from './interfaces';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { Client } = require('@notionhq/client')
-import * as blogIndexCache from './blog-index-cache'
+const { Client } = require('@notionhq/client');
+import * as blogIndexCache from './blog-index-cache';
 
 const client = new Client({
   auth: NOTION_API_SECRET,
-})
+});
 
 export async function getPosts(pageSize = 10): Promise<Post[]> {
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
-    return allPosts.slice(0, pageSize)
+    const allPosts = await getAllPosts();
+    return allPosts.slice(0, pageSize);
   }
 
   const params = {
@@ -58,23 +58,23 @@ export async function getPosts(pageSize = 10): Promise<Post[]> {
       },
     ],
     page_size: pageSize,
-  }
+  };
 
   const res: responses.QueryDatabaseResponse = await client.databases.query(
-    params
-  )
+    params,
+  );
 
   return res.results
     .filter((pageObject) => _validPageObject(pageObject))
-    .map((pageObject) => _buildPost(pageObject))
+    .map((pageObject) => _buildPost(pageObject));
 }
 
 export async function getAllPosts(): Promise<Post[]> {
-  let results = []
+  let results = [];
 
   if (blogIndexCache.exists()) {
-    results = blogIndexCache.get()
-    console.log('Found cached posts.')
+    results = blogIndexCache.get();
+    console.log('Found cached posts.');
   } else {
     const params = {
       database_id: DATABASE_ID,
@@ -87,42 +87,42 @@ export async function getAllPosts(): Promise<Post[]> {
         },
       ],
       page_size: 100,
-    }
+    };
 
     while (true) {
       const res: responses.QueryDatabaseResponse = await client.databases.query(
-        params
-      )
+        params,
+      );
 
-      results = results.concat(res.results)
+      results = results.concat(res.results);
 
       if (!res.has_more) {
-        break
+        break;
       }
 
-      params['start_cursor'] = res.next_cursor
+      params['start_cursor'] = res.next_cursor;
     }
   }
 
   return results
     .filter((pageObject) => _validPageObject(pageObject))
-    .map((pageObject) => _buildPost(pageObject))
+    .map((pageObject) => _buildPost(pageObject));
 }
 
 export async function getRankedPosts(pageSize = 10): Promise<Post[]> {
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
+    const allPosts = await getAllPosts();
     return allPosts
       .filter((post) => !!post.Rank)
       .sort((a, b) => {
         if (a.Rank > b.Rank) {
-          return -1
+          return -1;
         } else if (a.Rank === b.Rank) {
-          return 0
+          return 0;
         }
-        return 1
+        return 1;
       })
-      .slice(0, pageSize)
+      .slice(0, pageSize);
   }
 
   const params = {
@@ -142,24 +142,24 @@ export async function getRankedPosts(pageSize = 10): Promise<Post[]> {
       },
     ],
     page_size: pageSize,
-  }
+  };
 
   const res: responses.QueryDatabaseResponse = await client.databases.query(
-    params
-  )
+    params,
+  );
 
   return res.results
     .filter((pageObject) => _validPageObject(pageObject))
-    .map((pageObject) => _buildPost(pageObject))
+    .map((pageObject) => _buildPost(pageObject));
 }
 
 export async function getPostsBefore(
   date: string,
-  pageSize = 10
+  pageSize = 10,
 ): Promise<Post[]> {
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
-    return allPosts.filter((post) => post.Date < date).slice(0, pageSize)
+    const allPosts = await getAllPosts();
+    return allPosts.filter((post) => post.Date < date).slice(0, pageSize);
   }
 
   const params = {
@@ -180,21 +180,21 @@ export async function getPostsBefore(
       },
     ],
     page_size: pageSize,
-  }
+  };
 
   const res: responses.QueryDatabaseResponse = await client.databases.query(
-    params
-  )
+    params,
+  );
 
   return res.results
     .filter((pageObject) => _validPageObject(pageObject))
-    .map((pageObject) => _buildPost(pageObject))
+    .map((pageObject) => _buildPost(pageObject));
 }
 
 export async function getFirstPost(): Promise<Post | null> {
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
-    return allPosts[allPosts.length - 1]
+    const allPosts = await getAllPosts();
+    return allPosts[allPosts.length - 1];
   }
 
   const params = {
@@ -208,27 +208,27 @@ export async function getFirstPost(): Promise<Post | null> {
       },
     ],
     page_size: 1,
-  }
+  };
 
   const res: responses.QueryDatabaseResponse = await client.databases.query(
-    params
-  )
+    params,
+  );
 
   if (!res.results.length) {
-    return null
+    return null;
   }
 
   if (!_validPageObject(res.results[0])) {
-    return null
+    return null;
   }
 
-  return _buildPost(res.results[0])
+  return _buildPost(res.results[0]);
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
-    return allPosts.find((post) => post.Slug === slug)
+    const allPosts = await getAllPosts();
+    return allPosts.find((post) => post.Slug === slug);
   }
 
   const res: responses.QueryDatabaseResponse = await client.databases.query({
@@ -248,30 +248,30 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
         direction: 'ascending',
       },
     ],
-  })
+  });
 
   if (!res.results.length) {
-    return null
+    return null;
   }
 
   if (!_validPageObject(res.results[0])) {
-    return null
+    return null;
   }
 
-  return _buildPost(res.results[0])
+  return _buildPost(res.results[0]);
 }
 
 export async function getPostsByTag(
   tagName: string | undefined,
-  pageSize = 100
+  pageSize = 100,
 ): Promise<Post[]> {
-  if (!tagName) return []
+  if (!tagName) return [];
 
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
+    const allPosts = await getAllPosts();
     return allPosts
       .filter((post) => post.Tags.map((t) => t.name).includes(tagName))
-      .slice(0, pageSize)
+      .slice(0, pageSize);
   }
 
   const params = {
@@ -292,32 +292,32 @@ export async function getPostsByTag(
       },
     ],
     page_size: pageSize,
-  }
+  };
 
   const res: responses.QueryDatabaseResponse = await client.databases.query(
-    params
-  )
+    params,
+  );
 
   return res.results
     .filter((pageObject) => _validPageObject(pageObject))
-    .map((pageObject) => _buildPost(pageObject))
+    .map((pageObject) => _buildPost(pageObject));
 }
 
 export async function getPostsByTagBefore(
   tagName: string,
   date: string,
-  pageSize = 100
+  pageSize = 100,
 ): Promise<Post[]> {
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
+    const allPosts = await getAllPosts();
     return allPosts
       .filter((post) => {
         return (
           post.Tags.map((t) => t.name).includes(tagName) &&
           new Date(post.Date) < new Date(date)
-        )
+        );
       })
-      .slice(0, pageSize)
+      .slice(0, pageSize);
   }
 
   const params = {
@@ -344,24 +344,24 @@ export async function getPostsByTagBefore(
       },
     ],
     page_size: pageSize,
-  }
+  };
 
   const res: responses.QueryDatabaseResponse = await client.databases.query(
-    params
-  )
+    params,
+  );
 
   return res.results
     .filter((pageObject) => _validPageObject(pageObject))
-    .map((pageObject) => _buildPost(pageObject))
+    .map((pageObject) => _buildPost(pageObject));
 }
 
 export async function getFirstPostByTag(tagName: string): Promise<Post | null> {
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
+    const allPosts = await getAllPosts();
     const sameTagPosts = allPosts.filter((post) =>
-      post.Tags.map((t) => t.name).includes(tagName)
-    )
-    return sameTagPosts[sameTagPosts.length - 1]
+      post.Tags.map((t) => t.name).includes(tagName),
+    );
+    return sameTagPosts[sameTagPosts.length - 1];
   }
 
   const params = {
@@ -382,86 +382,86 @@ export async function getFirstPostByTag(tagName: string): Promise<Post | null> {
       },
     ],
     page_size: 1,
-  }
+  };
 
   const res: responses.QueryDatabaseResponse = await client.databases.query(
-    params
-  )
+    params,
+  );
 
   if (!res.results.length) {
-    return null
+    return null;
   }
 
   if (!_validPageObject(res.results[0])) {
-    return null
+    return null;
   }
 
-  return _buildPost(res.results[0])
+  return _buildPost(res.results[0]);
 }
 
 export async function getAllBlocksByBlockId(blockId: string): Promise<Block[]> {
-  let allBlocks: Block[] = []
+  let allBlocks: Block[] = [];
 
   const params = {
     block_id: blockId,
-  }
+  };
 
   while (true) {
     const res: responses.RetrieveBlockChildrenResponse =
-      await client.blocks.children.list(params)
+      await client.blocks.children.list(params);
 
-    const blocks = res.results.map((blockObject) => _buildBlock(blockObject))
+    const blocks = res.results.map((blockObject) => _buildBlock(blockObject));
 
-    allBlocks = allBlocks.concat(blocks)
+    allBlocks = allBlocks.concat(blocks);
 
     if (!res.has_more) {
-      break
+      break;
     }
 
-    params['start_cursor'] = res.next_cursor
+    params['start_cursor'] = res.next_cursor;
   }
 
   for (let i = 0; i < allBlocks.length; i++) {
-    const block = allBlocks[i]
+    const block = allBlocks[i];
 
     if (block.Type === 'table') {
-      block.Table.Rows = await _getTableRows(block.Id)
+      block.Table.Rows = await _getTableRows(block.Id);
     } else if (block.Type === 'column_list') {
-      block.ColumnList.Columns = await _getColumns(block.Id)
+      block.ColumnList.Columns = await _getColumns(block.Id);
     } else if (block.Type === 'bulleted_list_item' && block.HasChildren) {
-      block.BulletedListItem.Children = await getAllBlocksByBlockId(block.Id)
+      block.BulletedListItem.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'numbered_list_item' && block.HasChildren) {
-      block.NumberedListItem.Children = await getAllBlocksByBlockId(block.Id)
+      block.NumberedListItem.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'to_do' && block.HasChildren) {
-      block.ToDo.Children = await getAllBlocksByBlockId(block.Id)
+      block.ToDo.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'synced_block') {
-      block.SyncedBlock.Children = await _getSyncedBlockChildren(block)
+      block.SyncedBlock.Children = await _getSyncedBlockChildren(block);
     } else if (block.Type === 'toggle') {
-      block.Toggle.Children = await getAllBlocksByBlockId(block.Id)
+      block.Toggle.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'paragraph' && block.HasChildren) {
-      block.Paragraph.Children = await getAllBlocksByBlockId(block.Id)
+      block.Paragraph.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'heading_1' && block.HasChildren) {
-      block.Heading1.Children = await getAllBlocksByBlockId(block.Id)
+      block.Heading1.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'heading_2' && block.HasChildren) {
-      block.Heading2.Children = await getAllBlocksByBlockId(block.Id)
+      block.Heading2.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'heading_3' && block.HasChildren) {
-      block.Heading3.Children = await getAllBlocksByBlockId(block.Id)
+      block.Heading3.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'quote' && block.HasChildren) {
-      block.Quote.Children = await getAllBlocksByBlockId(block.Id)
+      block.Quote.Children = await getAllBlocksByBlockId(block.Id);
     } else if (block.Type === 'callout' && block.HasChildren) {
-      block.Callout.Children = await getAllBlocksByBlockId(block.Id)
+      block.Callout.Children = await getAllBlocksByBlockId(block.Id);
     }
   }
 
-  return allBlocks
+  return allBlocks;
 }
 
 export async function getBlock(blockId: string): Promise<Block> {
   const res: responses.RetrieveBlockResponse = await client.blocks.retrieve({
     block_id: blockId,
-  })
+  });
 
-  return _buildBlock(res)
+  return _buildBlock(res);
 }
 
 function _buildBlock(blockObject: responses.BlockObject): Block {
@@ -469,121 +469,121 @@ function _buildBlock(blockObject: responses.BlockObject): Block {
     Id: blockObject.id,
     Type: blockObject.type,
     HasChildren: blockObject.has_children,
-  }
+  };
 
   switch (blockObject.type) {
     case 'paragraph':
       const paragraph: Paragraph = {
         RichTexts: blockObject.paragraph.rich_text.map(_buildRichText),
         Color: blockObject.paragraph.color,
-      }
+      };
 
-      block.Paragraph = paragraph
-      break
+      block.Paragraph = paragraph;
+      break;
     case 'heading_1':
       const heading1: Heading1 = {
         RichTexts: blockObject.heading_1.rich_text.map(_buildRichText),
         Color: blockObject.heading_1.color,
         IsToggleable: blockObject.heading_1.is_toggleable,
-      }
+      };
 
-      block.Heading1 = heading1
-      break
+      block.Heading1 = heading1;
+      break;
     case 'heading_2':
       const heading2: Heading2 = {
         RichTexts: blockObject.heading_2.rich_text.map(_buildRichText),
         Color: blockObject.heading_2.color,
         IsToggleable: blockObject.heading_2.is_toggleable,
-      }
+      };
 
-      block.Heading2 = heading2
-      break
+      block.Heading2 = heading2;
+      break;
     case 'heading_3':
       const heading3: Heading3 = {
         RichTexts: blockObject.heading_3.rich_text.map(_buildRichText),
         Color: blockObject.heading_3.color,
         IsToggleable: blockObject.heading_3.is_toggleable,
-      }
+      };
 
-      block.Heading3 = heading3
-      break
+      block.Heading3 = heading3;
+      break;
     case 'bulleted_list_item':
       const bulletedListItem: BulletedListItem = {
         RichTexts: blockObject.bulleted_list_item.rich_text.map(_buildRichText),
         Color: blockObject.bulleted_list_item.color,
-      }
+      };
 
-      block.BulletedListItem = bulletedListItem
-      break
+      block.BulletedListItem = bulletedListItem;
+      break;
     case 'numbered_list_item':
       const numberedListItem: NumberedListItem = {
         RichTexts: blockObject.numbered_list_item.rich_text.map(_buildRichText),
         Color: blockObject.numbered_list_item.color,
-      }
+      };
 
-      block.NumberedListItem = numberedListItem
-      break
+      block.NumberedListItem = numberedListItem;
+      break;
     case 'to_do':
       const toDo: ToDo = {
         RichTexts: blockObject.to_do.rich_text.map(_buildRichText),
         Checked: blockObject.to_do.checked,
         Color: blockObject.to_do.color,
-      }
+      };
 
-      block.ToDo = toDo
-      break
+      block.ToDo = toDo;
+      break;
     case 'video':
       const video: Video = {
         Type: blockObject.video.type,
-      }
+      };
 
       if (blockObject.video.type === 'external') {
-        video.External = { Url: blockObject.video.external.url }
+        video.External = { Url: blockObject.video.external.url };
       }
 
-      block.Video = video
-      break
+      block.Video = video;
+      break;
     case 'image':
       const image: Image = {
         Caption: blockObject.image.caption.map(_buildRichText),
         Type: blockObject.image.type,
-      }
+      };
 
       if (blockObject.image.type === 'external') {
-        image.External = { Url: blockObject.image.external.url }
+        image.External = { Url: blockObject.image.external.url };
       } else {
         image.File = {
           Url: blockObject.image.file.url,
           ExpiryTime: blockObject.image.file.expiry_time,
-        }
+        };
       }
 
-      block.Image = image
-      break
+      block.Image = image;
+      break;
     case 'code':
       const code: Code = {
         Caption: blockObject[blockObject.type].caption.map(_buildRichText),
         RichTexts: blockObject[blockObject.type].rich_text.map(_buildRichText),
         Language: blockObject.code.language,
-      }
+      };
 
-      block.Code = code
-      break
+      block.Code = code;
+      break;
     case 'quote':
       const quote: Quote = {
         RichTexts: blockObject[blockObject.type].rich_text.map(_buildRichText),
         Color: blockObject[blockObject.type].color,
-      }
+      };
 
-      block.Quote = quote
-      break
+      block.Quote = quote;
+      break;
     case 'equation':
       const equation: Equation = {
         Expression: blockObject[blockObject.type].expression,
-      }
+      };
 
-      block.Equation = equation
-      break
+      block.Equation = equation;
+      break;
     case 'callout':
       const callout: Callout = {
         RichTexts: blockObject[blockObject.type].rich_text.map(_buildRichText),
@@ -591,96 +591,96 @@ function _buildBlock(blockObject: responses.BlockObject): Block {
           Emoji: blockObject[blockObject.type].icon.emoji,
         },
         Color: blockObject[blockObject.type].color,
-      }
+      };
 
-      block.Callout = callout
-      break
+      block.Callout = callout;
+      break;
     case 'synced_block':
-      let syncedFrom: SyncedFrom = null
+      let syncedFrom: SyncedFrom = null;
       if (
         blockObject[blockObject.type].synced_from &&
         blockObject[blockObject.type].synced_from.block_id
       ) {
         syncedFrom = {
           BlockId: blockObject[blockObject.type].synced_from.block_id,
-        }
+        };
       }
 
       const syncedBlock: SyncedBlock = {
         SyncedFrom: syncedFrom,
-      }
+      };
 
-      block.SyncedBlock = syncedBlock
-      break
+      block.SyncedBlock = syncedBlock;
+      break;
     case 'toggle':
       const toggle: Toggle = {
         RichTexts: blockObject[blockObject.type].rich_text.map(_buildRichText),
         Color: blockObject[blockObject.type].color,
         Children: [],
-      }
+      };
 
-      block.Toggle = toggle
-      break
+      block.Toggle = toggle;
+      break;
     case 'embed':
       const embed: Embed = {
         Url: blockObject.embed.url,
-      }
+      };
 
-      block.Embed = embed
-      break
+      block.Embed = embed;
+      break;
     case 'bookmark':
       const bookmark: Bookmark = {
         Url: blockObject.bookmark.url,
-      }
+      };
 
-      block.Bookmark = bookmark
-      break
+      block.Bookmark = bookmark;
+      break;
     case 'link_preview':
       const linkPreview: LinkPreview = {
         Url: blockObject.link_preview.url,
-      }
+      };
 
-      block.LinkPreview = linkPreview
-      break
+      block.LinkPreview = linkPreview;
+      break;
     case 'table':
       const table: Table = {
         TableWidth: blockObject.table.table_width,
         HasColumnHeader: blockObject.table.has_column_header,
         HasRowHeader: blockObject.table.has_row_header,
         Rows: [],
-      }
+      };
 
-      block.Table = table
-      break
+      block.Table = table;
+      break;
     case 'column_list':
       const columnList: ColumnList = {
         Columns: [],
-      }
+      };
 
-      block.ColumnList = columnList
-      break
+      block.ColumnList = columnList;
+      break;
     case 'table_of_contents':
       const tableOfContents: TableOfContents = {
         Color: blockObject.table_of_contents.color,
-      }
+      };
 
-      block.TableOfContents = tableOfContents
-      break
+      block.TableOfContents = tableOfContents;
+      break;
   }
 
-  return block
+  return block;
 }
 
 async function _getTableRows(blockId: string): Promise<TableRow[]> {
-  let tableRows: TableRow[] = []
+  let tableRows: TableRow[] = [];
 
   const params = {
     block_id: blockId,
-  }
+  };
 
   while (true) {
     const res: responses.RetrieveBlockChildrenResponse =
-      await client.blocks.children.list(params)
+      await client.blocks.children.list(params);
 
     const blocks = res.results.map((blockObject) => {
       const tableRow: TableRow = {
@@ -688,118 +688,120 @@ async function _getTableRows(blockId: string): Promise<TableRow[]> {
         Type: blockObject.type,
         HasChildren: blockObject.has_children,
         Cells: [],
-      }
+      };
 
       if (blockObject.type === 'table_row') {
         const cells: TableCell[] = blockObject.table_row.cells.map((cell) => {
           const tableCell: TableCell = {
             RichTexts: cell.map(_buildRichText),
-          }
+          };
 
-          return tableCell
-        })
+          return tableCell;
+        });
 
-        tableRow.Cells = cells
+        tableRow.Cells = cells;
       }
 
-      return tableRow
-    })
+      return tableRow;
+    });
 
-    tableRows = tableRows.concat(blocks)
+    tableRows = tableRows.concat(blocks);
 
     if (!res.has_more) {
-      break
+      break;
     }
 
-    params['start_cursor'] = res.next_cursor
+    params['start_cursor'] = res.next_cursor;
   }
 
-  return tableRows
+  return tableRows;
 }
 
 async function _getColumns(blockId: string): Promise<Column[]> {
-  let columns: Column[] = []
+  let columns: Column[] = [];
 
   const params = {
     block_id: blockId,
-  }
+  };
 
   while (true) {
     const res: responses.RetrieveBlockChildrenResponse =
-      await client.blocks.children.list(params)
+      await client.blocks.children.list(params);
 
     const blocks = await Promise.all(
       res.results.map(async (blockObject) => {
-        const children = await getAllBlocksByBlockId(blockObject.id)
+        const children = await getAllBlocksByBlockId(blockObject.id);
 
         const column: Column = {
           Id: blockObject.id,
           Type: blockObject.type,
           HasChildren: blockObject.has_children,
           Children: children,
-        }
+        };
 
-        return column
-      })
-    )
+        return column;
+      }),
+    );
 
-    columns = columns.concat(blocks)
+    columns = columns.concat(blocks);
 
     if (!res.has_more) {
-      break
+      break;
     }
 
-    params['start_cursor'] = res.next_cursor
+    params['start_cursor'] = res.next_cursor;
   }
 
-  return columns
+  return columns;
 }
 
 async function _getSyncedBlockChildren(block: Block): Promise<Block[]> {
-  let originalBlock: Block = block
+  let originalBlock: Block = block;
   if (
     block.SyncedBlock &&
     block.SyncedBlock.SyncedFrom &&
     block.SyncedBlock.SyncedFrom.BlockId
   ) {
     try {
-      originalBlock = await getBlock(block.SyncedBlock.SyncedFrom.BlockId)
+      originalBlock = await getBlock(block.SyncedBlock.SyncedFrom.BlockId);
     } catch (err) {
-      console.log(`Could not retrieve the original synced_block. error: ${err}`)
-      return []
+      console.log(
+        `Could not retrieve the original synced_block. error: ${err}`,
+      );
+      return [];
     }
   }
 
-  const children = await getAllBlocksByBlockId(originalBlock.Id)
-  return children
+  const children = await getAllBlocksByBlockId(originalBlock.Id);
+  return children;
 }
 
 export async function getAllTags(): Promise<SelectProperty[]> {
   if (blogIndexCache.exists()) {
-    const allPosts = await getAllPosts()
+    const allPosts = await getAllPosts();
     return [...new Set(allPosts.flatMap((post) => post.Tags))].sort(
-      (a: SelectProperty, b: SelectProperty) => a.name.localeCompare(b.name)
-    )
+      (a: SelectProperty, b: SelectProperty) => a.name.localeCompare(b.name),
+    );
   }
 
   const res: responses.RetrieveDatabaseResponse =
     await client.databases.retrieve({
       database_id: DATABASE_ID,
-    })
+    });
 
   return res.properties.Tags.multi_select.options
     .reduce((acc: SelectProperty[], tag: SelectProperty) => {
-      acc.push(tag)
-      return acc
+      acc.push(tag);
+      return acc;
     }, [] as SelectProperty[])
     .sort((a: SelectProperty, b: SelectProperty) =>
-      a.name.localeCompare(b.name)
-    )
+      a.name.localeCompare(b.name),
+    );
 }
 
 function _buildFilter(conditions = []) {
   if (process.env.NODE_ENV === 'development') {
-    return { and: conditions }
+    return { and: conditions };
   }
 
   return {
@@ -817,34 +819,34 @@ function _buildFilter(conditions = []) {
             on_or_before: new Date().toISOString(),
           },
         },
-      ])
+      ]),
     ),
-  }
+  };
 }
 
 function _uniqueConditions(conditions = []) {
-  const properties = []
+  const properties = [];
 
   return conditions.filter((cond) => {
     if (properties.includes(cond.property)) {
-      return false
+      return false;
     }
-    properties.push(cond.property)
-    return true
-  })
+    properties.push(cond.property);
+    return true;
+  });
 }
 
 function _validPageObject(pageObject: responses.PageObject): boolean {
-  const prop = pageObject.properties
+  const prop = pageObject.properties;
   return (
     prop.Page.title.length > 0 &&
     prop.Slug.rich_text.length > 0 &&
     !!prop.Date.date
-  )
+  );
 }
 
 function _buildPost(pageObject: responses.PageObject): Post {
-  const prop = pageObject.properties
+  const prop = pageObject.properties;
 
   const post: Post = {
     PageId: pageObject.id,
@@ -859,9 +861,9 @@ function _buildPost(pageObject: responses.PageObject): Post {
     OGImage:
       prop.OGImage.files.length > 0 ? prop.OGImage.files[0].file.url : null,
     Rank: prop.Rank.number,
-  }
+  };
 
-  return post
+  return post;
 }
 
 function _buildRichText(richTextObject: responses.RichTextObject): RichText {
@@ -872,32 +874,32 @@ function _buildRichText(richTextObject: responses.RichTextObject): RichText {
     Underline: richTextObject.annotations.underline,
     Code: richTextObject.annotations.code,
     Color: richTextObject.annotations.color,
-  }
+  };
 
   const richText: RichText = {
     Annotation: annotation,
     PlainText: richTextObject.plain_text,
     Href: richTextObject.href,
-  }
+  };
 
   if (richTextObject.type === 'text') {
     const text: Text = {
       Content: richTextObject.text.content,
-    }
+    };
 
     if (richTextObject.text.link) {
       text.Link = {
         Url: richTextObject.text.link.url,
-      }
+      };
     }
 
-    richText.Text = text
+    richText.Text = text;
   } else if (richTextObject.type === 'equation') {
     const equation: Equation = {
       Expression: richTextObject.equation.expression,
-    }
-    richText.Equation = equation
+    };
+    richText.Equation = equation;
   }
 
-  return richText
+  return richText;
 }
