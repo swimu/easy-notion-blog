@@ -1,5 +1,5 @@
-import { NUMBER_OF_POSTS_PER_PAGE } from '../../app/server-constants'
-import GoogleAnalytics from '../../components/google-analytics'
+import { NUMBER_OF_POSTS_PER_PAGE } from '../../app/server-constants';
+import GoogleAnalytics from '../../components/google-analytics';
 import {
   BlogPostLink,
   BlogTagLink,
@@ -10,17 +10,16 @@ import {
   PostTags,
   PostTitle,
   ReadMoreLink,
-} from '../../components/blog-parts'
-import styles from '../../styles/blog.module.css'
+} from '../../components/blog-parts';
+import styles from '../../styles/blog.module.css';
 import {
   getPosts,
   getFirstPost,
   getRankedPosts,
   getAllTags,
-} from '../../lib/notion/client'
+} from '../../lib/notion/client';
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 60
+export const revalidate = 60;
 
 const BlogPage = async () => {
   const [posts, firstPost, rankedPosts, tags] = await Promise.all([
@@ -28,11 +27,11 @@ const BlogPage = async () => {
     getFirstPost(),
     getRankedPosts(),
     getAllTags(),
-  ])
+  ]);
 
   return (
     <>
-      <GoogleAnalytics pageTitle="Blog" />
+      <GoogleAnalytics pageTitle='Blog' />
       <div className={styles.container}>
         <div className={styles.mainContent}>
           <NoContents contents={posts} />
@@ -46,7 +45,7 @@ const BlogPage = async () => {
                 <PostExcerpt post={post} />
                 <ReadMoreLink post={post} />
               </div>
-            )
+            );
           })}
 
           <footer>
@@ -55,12 +54,12 @@ const BlogPage = async () => {
         </div>
 
         <div className={styles.subContent}>
-          <BlogPostLink heading="Recommended" posts={rankedPosts} />
-          <BlogTagLink heading="Categories" tags={tags} />
+          <BlogPostLink heading='Recommended' posts={rankedPosts} />
+          <BlogTagLink heading='Categories' tags={tags} />
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default BlogPage
+export default BlogPage;
