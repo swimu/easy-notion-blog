@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   FacebookIcon,
@@ -9,10 +9,10 @@ import {
   PocketShareButton,
   TwitterIcon,
   TwitterShareButton,
-} from 'react-share'
+} from 'react-share';
 
-import * as gtag from '../lib/gtag'
-import styles from '../styles/social-buttons.module.css'
+import * as gtag from '../lib/gtag';
+import styles from '../styles/social-buttons.module.css';
 
 const SocialButtons = ({ title = '', url, id = null }) => (
   <ul className={styles.socialButtons}>
@@ -76,6 +76,6 @@ const SocialButtons = ({ title = '', url, id = null }) => (
       </HatenaShareButton>
     </li>
   </ul>
-)
+);
 
-export default SocialButtons
+export default SocialButtons;

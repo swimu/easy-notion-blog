@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import Prism from 'prismjs'
-import 'prismjs/components/prism-css'
-import 'prismjs/components/prism-diff'
-import 'prismjs/components/prism-docker'
-import 'prismjs/components/prism-elixir'
-import 'prismjs/components/prism-go'
-import 'prismjs/components/prism-hcl'
-import 'prismjs/components/prism-java'
-import 'prismjs/components/prism-json'
-import 'prismjs/components/prism-python'
-import 'prismjs/components/prism-ruby'
-import 'prismjs/components/prism-sql'
-import 'prismjs/components/prism-typescript'
-import 'prismjs/components/prism-yaml'
+import Prism from 'prismjs';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-diff';
+import 'prismjs/components/prism-docker';
+import 'prismjs/components/prism-elixir';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-hcl';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-ruby';
+import 'prismjs/components/prism-sql';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-yaml';
 
-import Mermaid from './mermaid'
-import { RichText } from '../../lib/notion/interfaces'
-import styles from '../../styles/notion-block.module.css'
+import Mermaid from './mermaid';
+import { RichText } from '../../lib/notion/interfaces';
+import styles from '../../styles/notion-block.module.css';
 
 const Code = ({ block }) => {
   const code = block.Code.RichTexts.map(
-    (richText: RichText) => richText.Text.Content
-  ).join('')
-  const language = block.Code.Language.toLowerCase()
+    (richText: RichText) => richText.Text.Content,
+  ).join('');
+  const language = block.Code.Language.toLowerCase();
   const grammer =
-    Prism.languages[language.toLowerCase()] || Prism.languages.javascript
+    Prism.languages[language.toLowerCase()] || Prism.languages.javascript;
 
   return (
     <div className={styles.code}>
@@ -46,7 +46,7 @@ const Code = ({ block }) => {
         </div>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default Code
+export default Code;

@@ -1,6 +1,6 @@
-import { notFound } from 'next/navigation'
-import { NUMBER_OF_POSTS_PER_PAGE } from '../../../../app/server-constants'
-import GoogleAnalytics from '../../../../components/google-analytics'
+import { notFound } from 'next/navigation';
+import { NUMBER_OF_POSTS_PER_PAGE } from '../../../../app/server-constants';
+import GoogleAnalytics from '../../../../components/google-analytics';
 import {
   BlogPostLink,
   BlogTagLink,
@@ -10,32 +10,32 @@ import {
   PostTags,
   PostTitle,
   ReadMoreLink,
-} from '../../../../components/blog-parts'
-import { colorClass } from '../../../../components/notion-block'
-import styles from '../../../../styles/blog.module.css'
+} from '../../../../components/blog-parts';
+import { colorClass } from '../../../../components/notion-block';
+import styles from '../../../../styles/blog.module.css';
 import {
   getPosts,
   getRankedPosts,
   getPostsByTag,
   getFirstPostByTag,
   getAllTags,
-} from '../../../../lib/notion/client'
-import '../../../../styles/notion-color.css'
+} from '../../../../lib/notion/client';
+import '../../../../styles/notion-color.css';
 
-export const revalidate = 60
+export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const tags = await getAllTags()
-  return tags.map((tag) => ({ tag: tag.name }))
+  const tags = await getAllTags();
+  return tags.map((tag) => ({ tag: tag.name }));
 }
 
 const BlogTagPage = async ({ params: { tag: encodedTag } }) => {
-  const tag = decodeURIComponent(encodedTag)
+  const tag = decodeURIComponent(encodedTag);
 
-  const posts = await getPostsByTag(tag, NUMBER_OF_POSTS_PER_PAGE)
+  const posts = await getPostsByTag(tag, NUMBER_OF_POSTS_PER_PAGE);
 
   if (posts.length === 0) {
-    notFound()
+    notFound();
   }
 
   const [firstPost, rankedPosts, recentPosts, tags] = await Promise.all([
@@ -43,9 +43,9 @@ const BlogTagPage = async ({ params: { tag: encodedTag } }) => {
     getRankedPosts(),
     getPosts(5),
     getAllTags(),
-  ])
+  ]);
 
-  const currentTag = posts[0].Tags.find((t) => t.name === tag)
+  const currentTag = posts[0].Tags.find((t) => t.name === tag);
 
   return (
     <>
@@ -69,7 +69,7 @@ const BlogTagPage = async ({ params: { tag: encodedTag } }) => {
                 <PostExcerpt post={post} />
                 <ReadMoreLink post={post} />
               </div>
-            )
+            );
           })}
 
           <footer>
@@ -78,13 +78,13 @@ const BlogTagPage = async ({ params: { tag: encodedTag } }) => {
         </div>
 
         <div className={styles.subContent}>
-          <BlogPostLink heading="Recommended" posts={rankedPosts} />
-          <BlogPostLink heading="Latest Posts" posts={recentPosts} />
-          <BlogTagLink heading="Categories" tags={tags} />
+          <BlogPostLink heading='Recommended' posts={rankedPosts} />
+          <BlogPostLink heading='Latest Posts' posts={recentPosts} />
+          <BlogTagLink heading='Categories' tags={tags} />
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default BlogTagPage
+export default BlogTagPage;

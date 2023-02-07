@@ -1,55 +1,55 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-import styles from '../../styles/notion-block.module.css'
+import styles from '../../styles/notion-block.module.css';
 
 interface Metadata {
-  title: string | null
-  description: string | null
-  image: string | null
+  title: string | null;
+  description: string | null;
+  image: string | null;
 }
 
 const Bookmark = ({ block }) => {
-  let sURL: string | null
+  let sURL: string | null;
   if (block.Bookmark) {
-    sURL = block.Bookmark.Url
+    sURL = block.Bookmark.Url;
   } else if (block.LinkPreview) {
-    sURL = block.LinkPreview.Url
+    sURL = block.LinkPreview.Url;
   } else if (block.Embed) {
-    sURL = block.Embed.Url
+    sURL = block.Embed.Url;
   }
 
-  const [metadata, setMetadata] = useState<Metadata | null>()
+  const [metadata, setMetadata] = useState<Metadata | null>();
 
   useEffect(() => {
     try {
-      const url = new URL(sURL)
+      const url = new URL(sURL);
       axios.get(`/api/url-metadata?url=${url.toString()}`).then((res) => {
-        setMetadata(res.data as Metadata)
-      })
+        setMetadata(res.data as Metadata);
+      });
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
-  }, [sURL])
+  }, [sURL]);
 
-  let url: URL
+  let url: URL;
   try {
-    url = new URL(sURL)
+    url = new URL(sURL);
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 
   if (!metadata || !url) {
-    return <></>
+    return <></>;
   }
 
-  const { title, description, image } = metadata
+  const { title, description, image } = metadata;
 
   return (
     <div className={styles.bookmark}>
-      <a href={url.toString()} target="_blank" rel="noopener noreferrer">
+      <a href={url.toString()} target='_blank' rel='noopener noreferrer'>
         <div>
           <div>{title ? title : ''}</div>
           <div>{description ? description : ''}</div>
@@ -57,9 +57,9 @@ const Bookmark = ({ block }) => {
             <div>
               <img
                 src={`https://www.google.com/s2/favicons?domain=${url.hostname}`}
-                alt="title"
-                loading="lazy"
-                decoding="async"
+                alt='title'
+                loading='lazy'
+                decoding='async'
               />
             </div>
             <div>{url.origin}</div>
@@ -67,12 +67,12 @@ const Bookmark = ({ block }) => {
         </div>
         <div>
           {image ? (
-            <img src={image} alt="title" loading="lazy" decoding="async" />
+            <img src={image} alt='title' loading='lazy' decoding='async' />
           ) : null}
         </div>
       </a>
     </div>
-  )
-}
+  );
+};
 
-export default Bookmark
+export default Bookmark;

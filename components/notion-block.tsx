@@ -1,24 +1,24 @@
-import React from 'react'
-import * as interfaces from '../lib/notion/interfaces'
+import React from 'react';
+import * as interfaces from '../lib/notion/interfaces';
 
-import Code from './notion-blocks/code'
-import Embed from './notion-blocks/embed'
-import Bookmark from './notion-blocks/bookmark'
-import Video from './notion-blocks/video'
-import ImageBlock from './notion-blocks/image-block'
-import InlineEquation from './notion-blocks/inline-equation'
-import BlockEquation from './notion-blocks/block-equation'
+import Code from './notion-blocks/code';
+import Embed from './notion-blocks/embed';
+import Bookmark from './notion-blocks/bookmark';
+import Video from './notion-blocks/video';
+import ImageBlock from './notion-blocks/image-block';
+import InlineEquation from './notion-blocks/inline-equation';
+import BlockEquation from './notion-blocks/block-equation';
 
-import styles from '../styles/notion-block.module.css'
-import '../styles/notion-color.css'
+import styles from '../styles/notion-block.module.css';
+import '../styles/notion-color.css';
 
 const RichText = ({ richText }) => {
-  let element
+  let element;
   if (richText.Text) {
     element = richText.Text.Content.split('\n').reduce(
       (acc: string, content: string, i: number) => {
         if (i === 0) {
-          return content
+          return content;
         }
         return (
           <React.Fragment key={`${content}-${i}`}>
@@ -26,80 +26,80 @@ const RichText = ({ richText }) => {
             <br />
             {content}
           </React.Fragment>
-        )
+        );
       },
-      ''
-    )
+      '',
+    );
   } else if (richText.Equation) {
-    element = <InlineEquation equation={richText.Equation} />
+    element = <InlineEquation equation={richText.Equation} />;
   } else {
-    element = null
+    element = null;
   }
 
   if (richText.Annotation.Bold) {
-    element = <b>{element}</b>
+    element = <b>{element}</b>;
   }
   if (richText.Annotation.Italic) {
-    element = <i>{element}</i>
+    element = <i>{element}</i>;
   }
   if (richText.Annotation.Strikethrough) {
-    element = <s>{element}</s>
+    element = <s>{element}</s>;
   }
   if (richText.Annotation.Underline) {
-    element = <u>{element}</u>
+    element = <u>{element}</u>;
   }
   if (richText.Annotation.Color && richText.Annotation.Color !== 'default') {
     element = (
       <span className={colorClass(richText.Annotation.Color)}>{element}</span>
-    )
+    );
   }
   if (richText.Annotation.Code) {
-    element = <code>{element}</code>
+    element = <code>{element}</code>;
   }
   if (richText.Href) {
-    element = <a href={richText.Href}>{element}</a>
+    element = <a href={richText.Href}>{element}</a>;
   }
 
-  return element
-}
+  return element;
+};
 
 export const colorClass = (color: string) => {
-  return color.replaceAll('_background', 'Background')
-}
+  return color.replaceAll('_background', 'Background');
+};
 
 const Paragraph = ({ block, headings }) => (
   <p className={colorClass(block.Paragraph.Color)}>
     {block.Paragraph.RichTexts.map(
       (richText: interfaces.RichText, i: number) => (
         <RichText richText={richText} key={`paragraph-${block.Id}-${i}`} />
-      )
+      ),
     )}
     {block.Paragraph.Children ? (
       <NotionBlocks blocks={block.Paragraph.Children} headings={headings} />
     ) : null}
   </p>
-)
+);
 
 const Heading1 = ({ block, headings }) => (
   <Heading heading={block.Heading1} level={1} headings={headings} />
-)
+);
 const Heading2 = ({ block, headings }) => (
   <Heading heading={block.Heading2} level={2} headings={headings} />
-)
+);
 const Heading3 = ({ block, headings }) => (
   <Heading heading={block.Heading3} level={3} headings={headings} />
-)
+);
 
 const Heading = ({ heading, level = 1, headings }) => {
-  const tag = `h${level + 3}`
-  const id = buildHeadingId(heading)
+  const tag = `h${level + 3}`;
+  const id = buildHeadingId(heading);
   const htag = React.createElement(
     tag,
     { className: colorClass(heading.Color) },
     heading.RichTexts.map((richText: interfaces.RichText) => (
       <RichText richText={richText} key={id} />
-    ))
-  )
+    )),
+  );
 
   if (heading.IsToggleable) {
     return (
@@ -113,22 +113,22 @@ const Heading = ({ heading, level = 1, headings }) => {
           <NotionBlocks blocks={heading.Children} headings={headings} />
         </div>
       </details>
-    )
+    );
   }
 
   return (
     <a href={`#${id}`} id={id}>
       {htag}
     </a>
-  )
-}
+  );
+};
 
 const buildHeadingId = (heading) =>
   heading.RichTexts.map(
-    (richText: interfaces.RichText) => richText.Text.Content
+    (richText: interfaces.RichText) => richText.Text.Content,
   )
     .join()
-    .trim()
+    .trim();
 
 const TableOfContents = ({ block, headings }) => {
   return (
@@ -137,13 +137,13 @@ const TableOfContents = ({ block, headings }) => {
         const heading =
           headingBlock.Heading1 ||
           headingBlock.Heading2 ||
-          headingBlock.Heading3
+          headingBlock.Heading3;
 
-        let indentClass = ''
+        let indentClass = '';
         if (headingBlock.Type === 'heading_2') {
-          indentClass = 'indent-1'
+          indentClass = 'indent-1';
         } else if (headingBlock.Type === 'heading_3') {
-          indentClass = 'indent-2'
+          indentClass = 'indent-2';
         }
 
         return (
@@ -156,15 +156,15 @@ const TableOfContents = ({ block, headings }) => {
           >
             <div key={headingBlock.Id}>
               {heading.RichTexts.map(
-                (richText: interfaces.RichText) => richText.PlainText
+                (richText: interfaces.RichText) => richText.PlainText,
               ).join('')}
             </div>
           </a>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
 const Quote = ({ block, headings }) => (
   <blockquote className={colorClass(block.Quote.Color)}>
@@ -175,11 +175,11 @@ const Quote = ({ block, headings }) => (
       <NotionBlocks blocks={block.Quote.Children} headings={headings} />
     ) : null}
   </blockquote>
-)
+);
 
 const Callout = ({ block, headings }) => {
-  const color = colorClass(block.Callout.Color)
-  const className = color ? `${styles.callout} ${color}` : styles.callout
+  const color = colorClass(block.Callout.Color);
+  const className = color ? `${styles.callout} ${color}` : styles.callout;
 
   return (
     <div className={className}>
@@ -188,15 +188,15 @@ const Callout = ({ block, headings }) => {
         {block.Callout.RichTexts.map(
           (richText: interfaces.RichText, i: number) => (
             <RichText richText={richText} key={`callout-${block.Id}-${i}`} />
-          )
+          ),
         )}
         {block.Callout.Children ? (
           <NotionBlocks blocks={block.Callout.Children} headings={headings} />
         ) : null}
       </div>
     </div>
-  )
-}
+  );
+};
 
 const Table = ({ block }) => (
   <div className={styles.table}>
@@ -206,12 +206,12 @@ const Table = ({ block }) => (
           return (
             <tr key={`${tableRow.Id}-${j}`}>
               {tableRow.Cells.map((cell: interfaces.TableCell, i: number) => {
-                let tag = 'td'
+                let tag = 'td';
                 if (
                   (block.Table.HasRowHeader && i === 0) ||
                   (block.Table.HasColumnHeader && j === 0)
                 ) {
-                  tag = 'th'
+                  tag = 'th';
                 }
 
                 return React.createElement(
@@ -223,17 +223,17 @@ const Table = ({ block }) => (
                         richText={richText}
                         key={`${tableRow.Id}-${j}-${i}-${k}`}
                       />
-                    )
-                  )
-                )
+                    ),
+                  ),
+                );
               })}
             </tr>
-          )
+          );
         })}
       </tbody>
     </table>
   </div>
-)
+);
 
 const ColumnList = ({ block, headings }) => (
   <div className={styles.columnList}>
@@ -243,7 +243,7 @@ const ColumnList = ({ block, headings }) => (
       </div>
     ))}
   </div>
-)
+);
 
 const List = ({ block, headings, level = 0 }) => {
   if (block.Type === 'bulleted_list') {
@@ -251,10 +251,10 @@ const List = ({ block, headings, level = 0 }) => {
       <ul>
         <BulletedListItems blocks={block.ListItems} headings={headings} />
       </ul>
-    )
+    );
   } else if (block.Type == 'numbered_list') {
     return level % 3 === 0 ? (
-      <ol type="1">
+      <ol type='1'>
         <NumberedListItems
           blocks={block.ListItems}
           level={level}
@@ -262,7 +262,7 @@ const List = ({ block, headings, level = 0 }) => {
         />
       </ol>
     ) : level % 3 === 1 ? (
-      <ol type="a">
+      <ol type='a'>
         <NumberedListItems
           blocks={block.ListItems}
           level={level}
@@ -270,22 +270,22 @@ const List = ({ block, headings, level = 0 }) => {
         />
       </ol>
     ) : (
-      <ol type="i">
+      <ol type='i'>
         <NumberedListItems
           blocks={block.ListItems}
           level={level}
           headings={headings}
         />
       </ol>
-    )
+    );
   }
 
   return (
     <div className={styles.toDo}>
       <ToDoItems blocks={block.ListItems} headings={headings} />
     </div>
-  )
-}
+  );
+};
 
 const BulletedListItems = ({ blocks, headings }) =>
   blocks
@@ -301,7 +301,7 @@ const BulletedListItems = ({ blocks, headings }) =>
               richText={richText}
               key={`bulleted-list-item-${listItem.Id}-${i}`}
             />
-          )
+          ),
         )}
         {listItem.HasChildren ? (
           <NotionBlocks
@@ -310,7 +310,7 @@ const BulletedListItems = ({ blocks, headings }) =>
           />
         ) : null}
       </li>
-    ))
+    ));
 
 const NumberedListItems = ({ blocks, level = 1, headings }) =>
   blocks
@@ -326,7 +326,7 @@ const NumberedListItems = ({ blocks, level = 1, headings }) =>
               richText={richText}
               key={`numbered-list-item-${listItem.Id}-${i}`}
             />
-          )
+          ),
         )}
         {listItem.HasChildren ? (
           <NotionBlocks
@@ -336,7 +336,7 @@ const NumberedListItems = ({ blocks, level = 1, headings }) =>
           />
         ) : null}
       </li>
-    ))
+    ));
 
 const ToDoItems = ({ blocks, headings }) =>
   blocks
@@ -347,7 +347,7 @@ const ToDoItems = ({ blocks, headings }) =>
         key={`to-do-item-${listItem.Id}`}
       >
         <input
-          type="checkbox"
+          type='checkbox'
           defaultChecked={listItem.ToDo.Checked}
           disabled={true}
         />
@@ -358,25 +358,25 @@ const ToDoItems = ({ blocks, headings }) =>
                 <s key={`to-do-item-${listItem.Id}-${i}`}>
                   <RichText richText={richText} />
                 </s>
-              )
+              );
             }
             return (
               <RichText
                 richText={richText}
                 key={`to-do-item-${listItem.Id}-${i}`}
               />
-            )
-          }
+            );
+          },
         )}
         {listItem.HasChildren ? (
           <NotionBlocks blocks={listItem.ToDo.Children} headings={headings} />
         ) : null}
       </div>
-    ))
+    ));
 
 const SyncedBlock = ({ block, headings }) => (
   <NotionBlocks blocks={block.SyncedBlock.Children} headings={headings} />
-)
+);
 
 const Toggle = ({ block, headings }) => (
   <details className={`${styles.toggle} ${colorClass(block.Toggle.Color)}`}>
@@ -384,72 +384,72 @@ const Toggle = ({ block, headings }) => (
       {block.Toggle.RichTexts.map(
         (richText: interfaces.RichText, i: number) => (
           <RichText richText={richText} key={`summary-${block.Id}-${i}`} />
-        )
+        ),
       )}
     </summary>
     <div>
       <NotionBlocks blocks={block.Toggle.Children} headings={headings} />
     </div>
   </details>
-)
+);
 
 const NotionBlock = ({ block, level, headings }) => {
   if (block.Type === 'paragraph') {
-    return <Paragraph block={block} headings={headings} />
+    return <Paragraph block={block} headings={headings} />;
   } else if (block.Type === 'heading_1') {
-    return <Heading1 block={block} headings={headings} />
+    return <Heading1 block={block} headings={headings} />;
   } else if (block.Type === 'heading_2') {
-    return <Heading2 block={block} headings={headings} />
+    return <Heading2 block={block} headings={headings} />;
   } else if (block.Type === 'heading_3') {
-    return <Heading3 block={block} headings={headings} />
+    return <Heading3 block={block} headings={headings} />;
   } else if (block.Type === 'table_of_contents') {
-    return <TableOfContents block={block} headings={headings} />
+    return <TableOfContents block={block} headings={headings} />;
   } else if (block.Type === 'image') {
-    return <ImageBlock block={block} />
+    return <ImageBlock block={block} />;
   } else if (block.Type === 'video') {
-    return <Video block={block} />
+    return <Video block={block} />;
   } else if (block.Type === 'code') {
-    return <Code block={block} />
+    return <Code block={block} />;
   } else if (block.Type === 'quote') {
-    return <Quote block={block} headings={headings} />
+    return <Quote block={block} headings={headings} />;
   } else if (block.Type === 'equation') {
-    return <BlockEquation block={block} />
+    return <BlockEquation block={block} />;
   } else if (block.Type === 'callout') {
-    return <Callout block={block} headings={headings} />
+    return <Callout block={block} headings={headings} />;
   } else if (block.Type === 'embed') {
-    return <Embed block={block} />
+    return <Embed block={block} />;
   } else if (block.Type === 'bookmark' || block.Type === 'link_preview') {
-    return <Bookmark block={block} />
+    return <Bookmark block={block} />;
   } else if (block.Type === 'divider') {
-    return <hr className="divider" />
+    return <hr className='divider' />;
   } else if (block.Type === 'table') {
-    return <Table block={block} />
+    return <Table block={block} />;
   } else if (block.Type === 'column_list') {
-    return <ColumnList block={block} headings={headings} />
+    return <ColumnList block={block} headings={headings} />;
   } else if (
     block.Type === 'bulleted_list' ||
     block.Type === 'numbered_list' ||
     block.Type === 'to_do'
   ) {
-    return <List block={block} level={level} headings={headings} />
+    return <List block={block} level={level} headings={headings} />;
   } else if (block.Type === 'synced_block') {
-    return <SyncedBlock block={block} headings={headings} />
+    return <SyncedBlock block={block} headings={headings} />;
   } else if (block.Type === 'toggle') {
-    return <Toggle block={block} headings={headings} />
+    return <Toggle block={block} headings={headings} />;
   }
 
-  return null
-}
+  return null;
+};
 
 const NotionBlocks = ({ blocks, isRoot = false, level = 0, headings = [] }) => {
-  let topLevelHeadings = headings
+  let topLevelHeadings = headings;
   if (isRoot) {
     topLevelHeadings = blocks.filter(
       (b: interfaces.Block) =>
         b.Type === 'heading_1' ||
         b.Type === 'heading_2' ||
-        b.Type === 'heading_3'
-    )
+        b.Type === 'heading_3',
+    );
   }
 
   return (
@@ -463,36 +463,36 @@ const NotionBlocks = ({ blocks, isRoot = false, level = 0, headings = [] }) => {
         />
       ))}
     </>
-  )
-}
+  );
+};
 
 const wrapListItems = (blocks: Array<interfaces.Block>) =>
   blocks.reduce((arr, block: interfaces.Block, i: number) => {
-    const isBulletedListItem = block.Type === 'bulleted_list_item'
-    const isNumberedListItem = block.Type === 'numbered_list_item'
-    const isToDo = block.Type === 'to_do'
+    const isBulletedListItem = block.Type === 'bulleted_list_item';
+    const isNumberedListItem = block.Type === 'numbered_list_item';
+    const isToDo = block.Type === 'to_do';
 
     if (!isBulletedListItem && !isNumberedListItem && !isToDo)
-      return arr.concat(block)
+      return arr.concat(block);
 
-    let listType = ''
+    let listType = '';
     if (isBulletedListItem) {
-      listType = 'bulleted_list'
+      listType = 'bulleted_list';
     } else if (isNumberedListItem) {
-      listType = 'numbered_list'
+      listType = 'numbered_list';
     } else {
-      listType = 'to_do'
+      listType = 'to_do';
     }
 
     if (i === 0) {
       const list: interfaces.List = {
         Type: listType,
         ListItems: [block],
-      }
-      return arr.concat(list)
+      };
+      return arr.concat(list);
     }
 
-    const prevList = arr[arr.length - 1]
+    const prevList = arr[arr.length - 1];
 
     if (
       (isBulletedListItem && prevList.Type !== 'bulleted_list') ||
@@ -502,13 +502,13 @@ const wrapListItems = (blocks: Array<interfaces.Block>) =>
       const list: interfaces.List = {
         Type: listType,
         ListItems: [block],
-      }
-      return arr.concat(list)
+      };
+      return arr.concat(list);
     }
 
-    prevList.ListItems.push(block)
+    prevList.ListItems.push(block);
 
-    return arr
-  }, [])
+    return arr;
+  }, []);
 
-export default NotionBlocks
+export default NotionBlocks;
