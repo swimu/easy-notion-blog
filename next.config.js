@@ -1,14 +1,11 @@
 const fs = require('fs')
 const path = require('path')
-const {
-  NOTION_API_SECRET,
-  DATABASE_ID,
-} = require('./app/server-constants')
+const { NOTION_API_SECRET, DATABASE_ID } = require('./app/server-constants')
 
 const warnOrError =
   process.env.NODE_ENV !== 'production' || process.env.GITHUB_ACTIONS
     ? console.warn
-    : msg => {
+    : (msg) => {
         throw new Error(msg)
       }
 
@@ -35,11 +32,9 @@ module.exports = {
     domains: ['s3.us-west-2.amazonaws.com', 'images.unsplash.com'],
   },
 
-    async rewrites() {
-       return [
-         { source: '/feed', destination: '/api/feed' },
-       ]
-     },
+  async rewrites() {
+    return [{ source: '/feed', destination: '/api/feed' }]
+  },
 
   outputFileTracing: false,
 

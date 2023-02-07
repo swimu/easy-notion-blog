@@ -6,7 +6,8 @@ const DATABASE_ID = process.env.DATABASE_ID
 const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL
 const NEXT_PUBLIC_GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID
 const NEXT_PUBLIC_SITE_TITLE = 'すいむ日記'
-const NEXT_PUBLIC_SITE_DESCRIPTION = 'Twitterでは書ききれないあれこれを置いています'
+const NEXT_PUBLIC_SITE_DESCRIPTION =
+  'Twitterでは書ききれないあれこれを置いています'
 const NUMBER_OF_POSTS_PER_PAGE = 10
 
 module.exports = {

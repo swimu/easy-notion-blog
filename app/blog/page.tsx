@@ -19,9 +19,8 @@ import {
   getAllTags,
 } from '../../lib/notion/client'
 
-export const dynamic = 'force-dynamic' 
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
-
 
 const BlogPage = async () => {
   const [posts, firstPost, rankedPosts, tags] = await Promise.all([
@@ -38,7 +37,7 @@ const BlogPage = async () => {
         <div className={styles.mainContent}>
           <NoContents contents={posts} />
 
-          {posts.map(post => {
+          {posts.map((post) => {
             return (
               <div className={styles.post} key={post.Slug}>
                 <PostDate post={post} />

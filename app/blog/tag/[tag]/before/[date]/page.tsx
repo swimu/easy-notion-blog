@@ -25,7 +25,9 @@ import '../../../../../../styles/notion-color.css'
 
 export const revalidate = 3600
 
-const BlogTagBeforeDatePage = async ({ params: { tag: encodedTag, date: encodedDate } }) => {
+const BlogTagBeforeDatePage = async ({
+  params: { tag: encodedTag, date: encodedDate },
+}) => {
   const tag = decodeURIComponent(encodedTag)
   const date = decodeURIComponent(encodedDate)
 
@@ -41,20 +43,29 @@ const BlogTagBeforeDatePage = async ({ params: { tag: encodedTag, date: encodedD
     getAllTags(),
   ])
 
-  const currentTag = posts[0]?.Tags.find(t => t.name === tag)
+  const currentTag = posts[0]?.Tags.find((t) => t.name === tag)
 
   return (
     <>
-      <GoogleAnalytics pageTitle={`Posts in ${tag} before ${date.split('T')[0]}`} />
+      <GoogleAnalytics
+        pageTitle={`Posts in ${tag} before ${date.split('T')[0]}`}
+      />
       <div className={styles.container}>
         <div className={styles.mainContent}>
           <header>
-            <h2><span className={`tag ${currentTag && colorClass(currentTag.color)}`}>{tag}</span> before {date.split('T')[0]}</h2>
+            <h2>
+              <span
+                className={`tag ${currentTag && colorClass(currentTag.color)}`}
+              >
+                {tag}
+              </span>{' '}
+              before {date.split('T')[0]}
+            </h2>
           </header>
 
           <NoContents contents={posts} />
 
-          {posts.map(post => {
+          {posts.map((post) => {
             return (
               <div className={styles.post} key={post.Slug}>
                 <PostDate post={post} />

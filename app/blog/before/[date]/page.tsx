@@ -47,7 +47,7 @@ const BlogBeforeDatePage = async ({ params: { date: encodedDate } }) => {
 
           <NoContents contents={posts} />
 
-          {posts.map(post => {
+          {posts.map((post) => {
             return (
               <div className={styles.post} key={post.Slug}>
                 <PostDate post={post} />

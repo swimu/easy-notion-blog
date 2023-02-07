@@ -28,7 +28,7 @@ export const revalidate = 30
 
 export async function generateStaticParams() {
   const posts = await getAllPosts()
-  return posts.map(p => ({ slug: p.Slug }))
+  return posts.map((p) => ({ slug: p.Slug }))
 }
 
 const BlogSlugPage = async ({ params: { slug } }) => {
@@ -39,21 +39,18 @@ const BlogSlugPage = async ({ params: { slug } }) => {
     redirect('/blog')
   }
 
-  const [
-    blocks,
-    rankedPosts,
-    recentPosts,
-    tags,
-    sameTagPosts,
-  ] = await Promise.all([
-    getAllBlocksByBlockId(post.PageId),
-    getRankedPosts(),
-    getPosts(5),
-    getAllTags(),
-    getPostsByTag(post.Tags[0]?.name, 6),
-  ])
+  const [blocks, rankedPosts, recentPosts, tags, sameTagPosts] =
+    await Promise.all([
+      getAllBlocksByBlockId(post.PageId),
+      getRankedPosts(),
+      getPosts(5),
+      getAllTags(),
+      getPostsByTag(post.Tags[0]?.name, 6),
+    ])
 
-  const otherPostsHavingSameTag = sameTagPosts.filter((p: Post) => p.Slug !== post.Slug)
+  const otherPostsHavingSameTag = sameTagPosts.filter(
+    (p: Post) => p.Slug !== post.Slug
+  )
 
   return (
     <>

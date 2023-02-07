@@ -19,11 +19,13 @@ import Mermaid from './mermaid'
 import { RichText } from '../../lib/notion/interfaces'
 import styles from '../../styles/notion-block.module.css'
 
-
 const Code = ({ block }) => {
-  const code = block.Code.RichTexts.map((richText: RichText) => richText.Text.Content).join('')
+  const code = block.Code.RichTexts.map(
+    (richText: RichText) => richText.Text.Content
+  ).join('')
   const language = block.Code.Language.toLowerCase()
-  const grammer = Prism.languages[language.toLowerCase()] || Prism.languages.javascript
+  const grammer =
+    Prism.languages[language.toLowerCase()] || Prism.languages.javascript
 
   return (
     <div className={styles.code}>

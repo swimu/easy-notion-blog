@@ -12,7 +12,7 @@ const BlogSlugHead = async ({ params: { slug } }) => {
       path={getBlogLink(post.Slug)}
     />
   ) : (
-    <DocumentHead/>
+    <DocumentHead />
   )
 }
 
