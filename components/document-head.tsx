@@ -58,11 +58,11 @@ const DocumentHead = ({ title = '', description = '', path = '' }) => {
         : 'blog'
       } />
       {ogImageContent ? (
-        <meta property="og:image" content={ogImageContent} />
+        <meta key="og:image" property="og:image" content={ogImageContent} />
       ) : null}
       <meta name="twitter:card" content="summary_large_image" />
       {ogImageContent ? (
-        <meta name="twitter:image" content={ogImageContent} />
+        <meta key="twitter:image" name="twitter:image" content={ogImageContent} />
       ) : null}
       <meta name="twitter:title" content={title ? `${title} - ${NEXT_PUBLIC_SITE_TITLE}` : NEXT_PUBLIC_SITE_TITLE} />
       <meta
